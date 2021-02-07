@@ -19,7 +19,7 @@ export function Chats(props) {
     <List className={classes.chats} id={"scroll-area"}>
       {props.chats.map((chat, index) => {
         return (
-          <Chat text={chat.text} type={chat.type} kye={index.toString()} />
+          <Chat text={chat.text} type={chat.type} key={index.toString()} />
         );
       })}
     </List>
