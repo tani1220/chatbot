@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useCallback } from "react";
 import Button from "@material-ui/core/Button";
 import Dialog from "@material-ui/core/Dialog";
 import DialogActions from "@material-ui/core/DialogActions";
@@ -6,117 +6,129 @@ import DialogContent from "@material-ui/core/DialogContent";
 import DialogTitle from "@material-ui/core/DialogTitle";
 import { TextInput } from "./TextInput";
 
-export default class FormDialog extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      name: "",
-      email: "",
-      description: "",
-    };
-    this.imputName = this.imputName.bind(this);
-    this.imputEmail = this.imputEmail.bind(this);
-    this.imputDescription = this.imputDescription.bind(this);
-  }
+export default function FormDialog(props) {
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [description, setDescription] = useState("");
 
-  imputName = (event) => {
-    //onchangeに作用
-    this.setState({
-      name: event.target.value, //入力された値を随時更新していく
-    });
+  const imputName = useCallback(
+    (event) => {
+      setName(event.target.value); //入力された値を随時更新していく
+    },
+    [setName]
+  );
+
+  const imputEmail = useCallback(
+    (event) => {
+      setEmail(event.target.value);
+    },
+    [setEmail]
+  );
+
+  const imputDescription = useCallback(
+    (event) => {
+      setDescription(event.target.value);
+    },
+    [setDescription]
+  );
+
+  const emailFormat = (email) => {
+    const regex = /^[a-zA-Z0-9.!#$%&'*+\/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/;
+    return regex.test(email);
   };
 
-  imputEmail = (event) => {
-    this.setState({
-      email: event.target.value,
-    });
+  const validateRequiredInput = (...args) => {
+    let isBlank = false;
+    for (let i = 0; i < args.length; i = (i + 1) | 0) {
+      if (args[i] === "") {
+        isBlank = true;
+      }
+    }
+    return isBlank;
   };
 
-  imputDescription = (event) => {
-    this.setState({
-      description: event.target.value,
-    });
-  };
+  const submit = () => {
+    const isBlank = validateRequiredInput(name, email, description);
+    const isValidEmail = emailFormat(email);
 
-  submit = () => {
-    const name = this.state.name;
-    const email = this.state.email;
-    const description = this.state.description;
+    if (isBlank) {
+      alert("必須入力欄が空白です。");
+      return false;
+    } else if (!isValidEmail) {
+      alert("メールアドレスの書式が異なります。");
+      return false;
+    } else {
+      const payload = {
+        text:
+          "お問い合わせがありました\n" +
+          "お名前: " +
+          name +
+          "\n" +
+          "メールアドレス: " +
+          email +
+          "\n" +
+          "【問い合わせ内容】\n" +
+          description,
+      };
 
-    const payload = {
-      text:
-        "お問い合わせがありました\n" +
-        "お名前: " +
-        name +
-        "\n" +
-        "メールアドレス: " +
-        email +
-        "\n" +
-        "【問い合わせ内容】\n" +
-        description,
-    };
+      const url =
+        "https://hooks.slack.com/services/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";
 
-    const url =
-      "https://hooks.slack.com/services/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";
-
-    fetch(url, {
-      method: "POST",
-      body: JSON.stringify(payload),
-    }).then(() => {
-      alert("送信が完了しました。");
-      this.setState({
-        name: "",
-        email: "",
-        description: "",
+      fetch(url, {
+        method: "POST",
+        body: JSON.stringify(payload),
+      }).then(() => {
+        alert("送信が完了しました。");
+        setName("");
+        setEmail("");
+        setDescription("");
+        return props.handleClose();
       });
-      return this.props.handleClose();
-    });
+    }
   };
 
-  render() {
-    return (
-      <Dialog
-        open={this.props.open}
-        onClose={this.props.handleClose}
-        aria-labelledby="alert-dialog-title"
-        aria-describedby="alert-dialog-description"
-      >
-        <DialogTitle id="alert-dialog-title">お問い合わせ</DialogTitle>
-        <DialogContent>
-          <TextInput
-            label={"お名前"}
-            multiline={false}
-            value={this.state.name}
-            rows={1}
-            type={"text"}
-            onChange={this.imputName}
-          />
-          <TextInput
-            label={"メールアドレス"}
-            multiline={false}
-            value={this.state.email}
-            rows={1}
-            type={"email"}
-            onChange={this.imputEmail}
-          />
-          <TextInput
-            label={"お問い合わせ内容"}
-            multiline={true}
-            value={this.state.description}
-            rows={5}
-            type={"text"}
-            onChange={this.imputDescription}
-          />
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={this.props.handleClose} color="primary">
-            キャンセル
-          </Button>
-          <Button onClick={this.submit} color="primary" autoFocus>
-            送信
-          </Button>
-        </DialogActions>
-      </Dialog>
-    );
-  }
+  return (
+    <Dialog
+      open={props.open}
+      onClose={props.handleClose}
+      aria-labelledby="alert-dialog-title"
+      aria-describedby="alert-dialog-description"
+    >
+      <DialogTitle id="alert-dialog-title">お問い合わせ</DialogTitle>
+      <DialogContent>
+        <TextInput
+          label={"お名前"}
+          multiline={false}
+          value={name}
+          rows={1}
+          type={"text"}
+          onChange={imputName}
+        />
+        <TextInput
+          label={"メールアドレス"}
+          multiline={false}
+          value={email}
+          rows={1}
+          type={"email"}
+          onChange={imputEmail}
+        />
+        <TextInput
+          label={"お問い合わせ内容"}
+          multiline={true}
+          value={description}
+          rows={5}
+          type={"text"}
+          onChange={imputDescription}
+        />
+      </DialogContent>
+      <DialogActions>
+        <Button onClick={props.handleClose} color="primary">
+          キャンセル
+        </Button>
+        <Button onClick={submit} color="primary" autoFocus>
+          送信
+        </Button>
+      </DialogActions>
+    </Dialog>
+  );
 }
