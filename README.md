@@ -1,4 +1,4 @@
-# React Study
+# Create a chatbot using React
 
 React を使ってチャットボットを作成しました！
 
