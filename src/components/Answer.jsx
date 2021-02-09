@@ -8,7 +8,7 @@ const useStyles = makeStyles(() =>
       borderColor: "blue",
       color: "blue",
       fontWeight: 600,
-      marginBotton: "8px",
+      marginBottom: "8px",
     },
   })
 );
