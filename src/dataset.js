@@ -1,11 +1,13 @@
-const dataset = {
+import SLACK_URL from "./webhookConfig";
+
+const defaultDataset = {
   firstAnswer: {
     answers: [
       { content: "お話したい", nextId: "talk" },
       { content: "私について知りたい", nextId: "aboutMe" },
       { content: "お友達になりたい", nextId: "friend" },
     ],
-    question: "Hello!!たにbotです。ご用件はなんでしょうか？",
+    question: "ようこそ🐱ご用件はなんでしょうか？",
   },
   talk: {
     answers: [
@@ -41,7 +43,7 @@ const dataset = {
       { content: "問い合わせる", nextId: "contact" },
       { content: "最初の質問に戻る", nextId: "firstAnswer" },
     ],
-    question: "その他についてですね。コチラからお問い合わせできます。",
+    question: "その他ですね。コチラからお問い合わせできます。",
   },
   consultation: {
     answers: [
@@ -56,8 +58,7 @@ const dataset = {
     answers: [
       {
         content: "Slackの招待を貰う",
-        nextId:
-          "https://join.slack.com/t/w1612258522-9kv186738/shared_invite/zt-ltul6cg6-xxDw869g_AMdXNCDAAJ3LA",
+        nextId: SLACK_URL.join,
       },
       { content: "最初の質問に戻る", nextId: "firstAnswer" },
     ],
@@ -77,8 +78,7 @@ const dataset = {
       { content: "フォローする", nextId: "https://twitter.com/tani_ningen" },
       {
         content: "slackでお話する",
-        nextId:
-          "https://join.slack.com/t/w1612258522-9kv186738/shared_invite/zt-ltul6cg6-xxDw869g_AMdXNCDAAJ3LA",
+        nextId: SLACK_URL.join,
       },
       { content: "最初の質問に戻る", nextId: "firstAnswer" },
     ],
@@ -87,4 +87,4 @@ const dataset = {
   },
 };
 
-export default dataset;
+export default defaultDataset;

@@ -5,6 +5,7 @@ import DialogActions from "@material-ui/core/DialogActions";
 import DialogContent from "@material-ui/core/DialogContent";
 import DialogTitle from "@material-ui/core/DialogTitle";
 import { TextInput } from "./TextInput";
+import SLACK_URL from "../../webhookConfig";
 
 export default function FormDialog(props) {
   const [name, setName] = useState("");
@@ -71,10 +72,7 @@ export default function FormDialog(props) {
           description,
       };
 
-      const url =
-        "https://hooks.slack.com/services/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";
-
-      fetch(url, {
+      fetch(SLACK_URL.slack, {
         method: "POST",
         body: JSON.stringify(payload),
       }).then(() => {
